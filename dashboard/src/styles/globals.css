@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --primary: #000000;
+    --secondary: #f9fafb;
+}
+
+* {
+  scrollbar-width: thin;
+}
+
+.dragtoscrollcontainer {
+  cursor: grab;
+  overflow: auto;
+}
+
+
+table {
+  /* Fixes a small portion on the left of the table that the user can see move underneath the stick Column */
+  margin-left: -1px;
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: 3px solid var(--primary);
+}
+
+*::-webkit-scrollbar-track {
+  background-color: 3px solid var(--primary);
+
+  border-radius: 2px;
+}
+*::-webkit-scrollbar-track-piece{
+  background-color: var(--primary);
+
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--secondary);
+  border-radius: 14px;
+  border: 3px solid var(--primary);
+}
+
+
+::-webkit-scrollbar-corner {
+  background-color: "#000000";
+  }
+
+
+
+.ansi-black-fg {
+    color: #000000;
+}
+
+.ansi-red-fg {
+    color: #f43f5e;
+}
+
+.ansi-green-fg {
+    color: #10b981;
+}
+
+.ansi-yellow-fg {
+    color: #fde047;
+}
+
+.ansi-blue-fg {
+    color: #3b82f6;
+}
+
+.ansi-magenta-fg {
+    color: #AA00AA;
+}
+
+.ansi-cyan-fg {
+    color: #00AAAA;
+}
+
+.ansi-white-fg {
+    color: #AAAAAA;
+}
+
+/* Bright colors */
+.ansi-grey-fg {
+    color: #555555;
+}
+
+.ansi-bright-red-fg {
+    color: #FF5555;
+}
+
+.ansi-bright-green-fg {
+    color: #55FF55;
+}
+
+.ansi-bright-yellow-fg {
+    color: #FFFF55;
+}
