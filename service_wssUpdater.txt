@@ -1,0 +1,14 @@
+[Unit]
+Description=Start wssClient.py inside chroot
+After=network.target
+
+[Service]
+User=appval002
+WorkingDirectory=/home/appval002/chromiumos/src/scripts/wssTriggerEnv/wssTrigger
+Environment="DNAME=APPVAL002 SUDO_PASSWORD=password"
+ExecStart=/usr/bin/env bash -c '/home/appval002/chromiumos/src/scripts/wssTriggerEnv/bin/python3 /home/appval002/chromiumos/src/scripts/wssTriggerEnv/wssTrigger/wssUpdater.py'
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
