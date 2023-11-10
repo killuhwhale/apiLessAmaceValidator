@@ -26,15 +26,15 @@ from imageserver.settings import BASE_DIR
 import zipfile
 from google.cloud import storage
 # Instantiates a client
-storage_client = storage.Client()
+# storage_client = storage.Client()
 
 # Set up Google Drive service
-creds = Credentials.from_service_account_file(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"),
-                                              scopes=['https://www.googleapis.com/auth/drive.readonly'])
-service = build('drive', 'v3', credentials=creds)
+# creds = Credentials.from_service_account_file(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS"),
+#                                               scopes=['https://www.googleapis.com/auth/drive.readonly'])
+# service = build('drive', 'v3', credentials=creds)
 
-APKFolder = f'{BASE_DIR}/files'
-os.makedirs(APKFolder, exist_ok=True)
+# APKFolder = f'{BASE_DIR}/files'
+# os.makedirs(APKFolder, exist_ok=True)
 
 
 V8_WEIGHTS=f"{BASE_DIR}/weights/best_1080_v8m_v3.pt"
@@ -201,72 +201,74 @@ def installByBlankFilePath(tid, file_path):
 class APKList(APIView):
 
     def get(self, req, format=None):
-        print(req)
-        drive_url = req.data['driveURL']
-        print("Drive URL ", drive_url)
+        return Response({"data": "Deprecated in APILess version", "error": None})
+        # print(req)
+        # drive_url = req.data['driveURL']
+        # print("Drive URL ", drive_url)
 
-        try:
-            file_names = []
-            response = service.files().list(q=f"'{drive_url}' in parents").execute()
-            #print("Google drive response: ", response)
-            files = response.get('files', [])
-            #print("Google drive response files: ", files)
-            file_id = None
-            for file in files:
-                file_names.append(file['name'] + "\\t" + file['name'].split('-')[0])
+        # try:
+        #     file_names = []
+        #     response = service.files().list(q=f"'{drive_url}' in parents").execute()
+        #     #print("Google drive response: ", response)
+        #     files = response.get('files', [])
+        #     #print("Google drive response files: ", files)
+        #     file_id = None
+        #     for file in files:
+        #         file_names.append(file['name'] + "\\t" + file['name'].split('-')[0])
 
-            escaped_package_names = "\\n".join(file_names)
-            print("Returning escaped packages: ", escaped_package_names)
-            return Response({"data": escaped_package_names, "error": None})
-        except Exception as err:
-            return Response({"data": None, "error": f"Failed to get list of packages from apks to check: {err}"})
+        #     escaped_package_names = "\\n".join(file_names)
+        #     print("Returning escaped packages: ", escaped_package_names)
+        #     return Response({"data": escaped_package_names, "error": None})
+        # except Exception as err:
+        #     return Response({"data": None, "error": f"Failed to get list of packages from apks to check: {err}"})
 
 class PythonStoreViewSet(APIView):
 
     def post(self, req, format=None):
-        pkg_name = req.data['pkgName']
-        drive_url = req.data['driveURL']
-        dutIP = req.data['dutIP']
-        tid = find_transport_id(dutIP)
-        print(f"DUT requested {pkg_name} from {drive_url}")
+        return Response({"data": "Deprecated in APILess version", "error": None})
+        # pkg_name = req.data['pkgName']
+        # drive_url = req.data['driveURL']
+        # dutIP = req.data['dutIP']
+        # tid = find_transport_id(dutIP)
+        # print(f"DUT requested {pkg_name} from {drive_url}")
 
-        try:
-            # Assuming files are stored in a folder named 'files' in the server's directory
-            file_path = os.path.join(APKFolder, pkg_name)
+        # try:
+        #     # Assuming files are stored in a folder named 'files' in the server's directory
+        #     file_path = os.path.join(APKFolder, pkg_name)
 
-            # Check if file exists on server
-            if not os.path.exists(f"{file_path}.apk") and not os.path.exists(f"{file_path}.zip_extracted"):
-                # If not, fetch from Google Drive and store on server
-                # Here, you'd need a way to determine the correct file ID based on package_name
-                # For now, I'm assuming file_id is passed but you may want to create a mapping
-                # or a database lookup to get the file ID based on the package_name
-                # folder_id = "1Lq_IdWlN9KOJT-h8dPiJsLFaRnHusg6e"
-                print("downloaing from google drive: ", pkg_name)
-                folder_id = drive_url
-                response = service.files().list(q=f"'{folder_id}' in parents").execute()
-                # print("Google drive response: ", response)
-                files = response.get('files', [])
-                # print("Google drive response files: ", files)
-                file_id = None
-                ext = ""
-                for file in files:
-                    # print("File in folder: ", file, file['name'])
-                    if str(file['name']).startswith(pkg_name):
-                        file_id = file['id']
-                        ext = file['name'].split(".")[-1]
-                        break
+        #     # Check if file exists on server
+        #     if not os.path.exists(f"{file_path}.apk") and not os.path.exists(f"{file_path}.zip_extracted"):
+        #         # If not, fetch from Google Drive and store on server
+        #         # Here, you'd need a way to determine the correct file ID based on package_name
+        #         # For now, I'm assuming file_id is passed but you may want to create a mapping
+        #         # or a database lookup to get the file ID based on the package_name
+        #         # folder_id = "1Lq_IdWlN9KOJT-h8dPiJsLFaRnHusg6e"
+        #         print("downloaing from google drive: ", pkg_name)
+        #         folder_id = drive_url
+        #         response = service.files().list(q=f"'{folder_id}' in parents").execute()
+        #         # print("Google drive response: ", response)
+        #         files = response.get('files', [])
+        #         # print("Google drive response files: ", files)
+        #         file_id = None
+        #         ext = ""
+        #         for file in files:
+        #             # print("File in folder: ", file, file['name'])
+        #             if str(file['name']).startswith(pkg_name):
+        #                 file_id = file['id']
+        #                 ext = file['name'].split(".")[-1]
+        #                 break
 
-                if file_id:
-                    download_file_from_drive(file_id, file_path, ext)
-                else:
-                    return Response({"data": None, "error": "File not found in Google Drive"})
+        #         if file_id:
+        #             download_file_from_drive(file_id, file_path, ext)
+        #         else:
+        #             return Response({"data": None, "error": "File not found in Google Drive"})
 
-            if installByBlankFilePath(tid, file_path):
-                return Response({"data": "Installed.", "error": None})
-            return Response({"data": None, "error": f"Failed to install: {pkg_name}"})
-        except Exception as err:
-            print("Failed to get APK: ", err)
-            return Response({"data": None, "error": f"Failed to get APK: {err}"})
+        #     if installByBlankFilePath(tid, file_path):
+        #         return Response({"data": "Installed.", "error": None})
+        #     return Response({"data": None, "error": f"Failed to install: {pkg_name}"})
+        # except Exception as err:
+        #     print("Failed to get APK: ", err)
+        #     return Response({"data": None, "error": f"Failed to get APK: {err}"})
 
 
 class EmailViewSet(APIView):
@@ -274,7 +276,7 @@ class EmailViewSet(APIView):
         '''https://www.abstractapi.com/guides/django-send-email'''
         # print(dir(req))
         print(req.data)
-
+        return Response({"success": "Deprecated"})
         subject = 'Automation bug report'
         message = req.data['msg']
         to = []
@@ -300,6 +302,7 @@ class YoloViewSet(APIView):
 
 class ImageViewSet(APIView):
     def post(self, req, format=None):
+        return Response({"success": True})
         # print(dir(req))
         print(req.data)
         print(req.FILES)
