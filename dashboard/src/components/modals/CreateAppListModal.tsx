@@ -83,7 +83,7 @@ const CreateAppListModal: React.FC<CreateAppListModalProps> = ({
                   onChangeName(event.target.value)
                 }
               />
-              <p className="pb-1 pt-4 font-light">Drive URL</p>
+              {/**<p className="pb-1 pt-4 font-light">Drive URL</p>
               <input
                 className="bg-slate-300  font-light"
                 placeholder="Drive URL"
@@ -91,7 +91,7 @@ const CreateAppListModal: React.FC<CreateAppListModalProps> = ({
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   onChangeDriveURL(event.target.value)
                 }
-              />
+              />**/}
               <p className="pb-1 pt-4 font-light">Apps</p>
               <textarea
                 className="bg-slate-300 pl-1  font-light"

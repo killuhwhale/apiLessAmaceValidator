@@ -9,6 +9,7 @@ import time
 import websockets
 import psutil
 from dotenv import load_dotenv
+from typing import List
 
 load_dotenv()
 exit_signal = threading.Event()
@@ -144,6 +145,23 @@ def run_process(cmd, wssToken):
         asyncio.run(current_websocket.send(ping("Process completed!", {}, wssToken)))
 
 
+USER = os.environ.get("USER")
+chroot_data_path = f"/home/{USER}/chromiumos/src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/local/bundles/cros/arc/data"
+
+def write_apps(apps: List[str]):
+    '''Overwrite /home/USER/chromiumos/src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/local/bundles/cros/arc/data/AMACE_app_list.tsv
+        platform/tast-tests/src/go.chromium.org/tast-tests/cros/local/bundles/cros/arc/amace.py
+    '''
+    print("Writing: ", apps)
+    apps = apps.split('\n')
+    filepath = f"{chroot_data_path}/AMACE_app_list.tsv"
+    with open(filepath, "w", encoding="utf-8") as f:
+        for idx, line in enumerate(apps):
+            if idx == len(apps) - 1:
+                f.write(f"{line}")  # dont not write empty line on last entry
+            else:
+                f.write(f"{line}\n")
+
 
 async def listen_to_ws():
     """TODO()
@@ -203,8 +221,8 @@ async def listen_to_ws():
     # wssToken = encode_jwt({"email": "wssClient@ggg.com"}, secret)
     wssToken = "token1337"
 
-    uri = "ws://localhost:3001/wss/"
     uri = "wss://appvaldashboard.com/wss/"
+    uri = "ws://localhost:3001/wss/"
     print(line_start, f"Device: {DEVICE_NAME} is using URI: ", uri)
     while True:
         try:
@@ -220,6 +238,8 @@ async def listen_to_ws():
                         # Check if the process is not already running
                         if not process_event.is_set():
 
+                            # Write data['apps'] to file:
+                            write_apps(data['apps'])
                             start_cmd = cmd(
                                         data['devices'],
                                         data['listname'],
@@ -269,7 +289,3 @@ if __name__ == "__main__":
     loop = asyncio.get_event_loop()
     loop.run_until_complete(listen_to_ws())
     loop.run_forever()
-
-
-
-

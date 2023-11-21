@@ -4,7 +4,7 @@
     cd wssTriggerEnv
     source bin/activate
     cd wssTrigger
-    DNAME=APPVAL002 TASTACCOUNT=tastarcplusplusappcompatxx@gmail.com:password python3 wssClient.py
+    DNAME=APPVAL002 TASTACCOUNT=tastarcplusplusappcompat14@gmail.com:password python3 wssClient.py
 2. Ensure Image Server is running
     lsof -i :8000
     - If not running:
