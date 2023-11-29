@@ -12,7 +12,11 @@ import (
 	"time"
 
 	"go.chromium.org/tast-tests/cros/common/testexec"
+	"go.chromium.org/tast-tests/cros/local/apps"
 	"go.chromium.org/tast-tests/cros/local/arc"
+	"go.chromium.org/tast-tests/cros/local/chrome"
+	"go.chromium.org/tast-tests/cros/local/chrome/uiauto/launcher"
+	"go.chromium.org/tast-tests/cros/local/input"
 
 	"go.chromium.org/tast/core/errors"
 	"go.chromium.org/tast/core/testing"
@@ -144,10 +148,12 @@ func installOrUpdate(ctx context.Context, a *arc.ARC, d *ui.Device, pkgName stri
 		return errors.Wrap(err, "failed to wait for ArcIntentHelper")
 	}
 
+	testing.ContextLog(ctx, pkgName, "Starting to open app page for install.")
 	if err := openAppPage(ctx, a, pkgName); err != nil {
+		testing.ContextLog(ctx, pkgName, err)
 		return err
 	}
-
+	testing.ContextLog(ctx, "Opened app page.", pkgName)
 	// btnText := installButtonText
 
 	// Wait for the app to install or update.
@@ -452,10 +458,6 @@ func purchaseApp(ctx context.Context, a *arc.ARC, priceBtn *ui.Object, d *ui.Dev
 
 		}
 	}
-
-	// GoBigSleepLint Need to wait for act to start...
-	// testing.Sleep(ctx, 120*time.Second)
-
 	return true
 }
 
@@ -465,10 +467,36 @@ func openAppPage(ctx context.Context, a *arc.ARC, pkgName string) error {
 		intentActionView    = "android.intent.action.VIEW"
 		playStoreAppPageURI = "market://details?id="
 		// am start a.SendIntentCommand(ctx, intentActionView, playStoreAppPageURI+pkgName)
+		// adb shell am start  -a android.intent.action.VIEW -d market://details?id=com.netflix.mediaclient
+
 	)
 
 	if err := a.SendIntentCommand(ctx, intentActionView, playStoreAppPageURI+pkgName).Run(testexec.DumpLogOnError); err != nil {
+		testing.ContextLog(ctx, "------------------------------------------> Failed to open app page!!!!")
 		return errors.Wrap(err, "failed to send intent to open the Play Store")
+	}
+
+	return nil
+}
+
+// OpenPlayStore opens the detail page of an app in Play Store.
+func OpenPlayStore(ctx context.Context, tconn *chrome.TestConn, kb *input.KeyboardEventWriter) error {
+	// const (
+	// 	intentActionView    = "android.intent.action.VIEW"
+	// 	playStoreAppPageURI = "market://details?id=com.android.vending"
+	// 	// am start a.SendIntentCommand(ctx, intentActionView, playStoreAppPageURI+pkgName)
+	// 	// adb shell am start  -a android.intent.action.VIEW -d market://details?id=com.netflix.mediaclient
+
+	// )
+
+	// if err := a.SendIntentCommand(ctx, intentActionView, playStoreAppPageURI).Run(testexec.DumpLogOnError); err != nil {
+	// 	testing.ContextLog(ctx, "------------------------------------------> Failed to open PlayStore!!!!")
+	// 	return errors.Wrap(err, "failed to send intent to open the Play Store")
+	// }
+
+	// Launch Play Books App.
+	if err := launcher.SearchAndWaitForAppOpen(tconn, kb, apps.PlayStore)(ctx); err != nil {
+		testing.ContextLog(ctx, "Failed to Launch the Play Books: ", err)
 	}
 
 	return nil

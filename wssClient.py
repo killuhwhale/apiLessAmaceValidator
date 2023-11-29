@@ -240,6 +240,7 @@ async def listen_to_ws():
 
                             # Write data['apps'] to file:
                             write_apps(data['apps'])
+                            print(line_start, "wrote apps to test: ", data['apps'])
                             start_cmd = cmd(
                                         data['devices'],
                                         data['listname'],

@@ -51,7 +51,7 @@ func LoadAppList(s *testing.State, startat string) ([]AppPackage, error) {
 	for lineIdx, line := range lines {
 		fields := strings.Split(line, "\t")
 		pgks = append(pgks, AppPackage{fields[1], fields[0]})
-		fmt.Println(fields)
+		// s.Logf("Fields: %v", fields)
 		if fields[1] == startat {
 			s.Logf("Starting at(%s): %s (matched: %s)", idx, fields[1], startat)
 			idx = lineIdx

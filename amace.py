@@ -19,7 +19,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 from multiprocessing import Process
 from time import time
-from typing import Dict, List
+from typing import Dict, List, Union
 
 import requests
 
@@ -84,34 +84,35 @@ class RequestBody:
     logs: str
     loginResults: int
 
+def check_ip(output: str, ip_prefix: str) -> Union[str, None]:
+    print(f"Trying with ip prefix: {ip_prefix=}")
+    try:
+        idx = output.index(ip_prefix)
+        idx += len(ip_prefix)
+        return f"{ip_prefix}{output[idx:idx+3]}"
+    except Exception:
+        print(f"Failed with ip prefix: {ip_prefix=}")
+    return None
 
 def get_local_ip():
     '''Gets host deivce local ip address.'''
     result = subprocess.run(['ifconfig'], capture_output=True, text=True)
     output = result.stdout
-    s = "192.168.1."
-    try:
-        idx = output.index(s)
-        idx += len(s)
-        return f"192.168.1.{output[idx:idx+3]}"
-    except Exception:
-        pass
+    ips = [
+        "192.168.1.",
+        "192.168.0.",
+        "100.91.154.",
+        "100.113.59.",
+        "10.0.0.",
+    ]
 
-    s = "10.0.0."
-    try:
-        idx = output.index(s)
-        idx += len(s)
-        return f"10.0.0.{output[idx:idx+3]}"
-    except Exception:
-        pass
+    for ip in ips:
+        host_ip = check_ip(output, ip)
+        if host_ip:
+            return host_ip
 
-    s = "192.168.0."
-    try:
-        idx = output.index(s)
-        idx += len(s)
-        return f"192.168.0.{output[idx:idx+3]}"
-    except Exception:
-        sys.exit("Failed to get local ip!")
+    sys.exit(f"Failed to get local ip from; {output=}")
+
 
 def read_secret(secret_path):
     """Get api key from file."""

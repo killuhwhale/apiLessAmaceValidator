@@ -7,7 +7,6 @@ package amace
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"go.chromium.org/tast-tests/cros/local/chrome"
 	"go.chromium.org/tast/core/testing"
@@ -77,8 +76,8 @@ func (ah *AppHistory) UnmarshalJSON(data []byte) error {
 }
 
 func AddHistoryWithImage(ctx context.Context, tconn *chrome.TestConn, ah *AppHistory, device, packageName, histMsg, runID, hostIP string, viaChrome bool) {
-	hs := fmt.Sprint(len(ah.History))
+	// hs := fmt.Sprint(len(ah.History))
 	testing.ContextLog(ctx, "Getting history len: ", ah.History, len(ah.History))
-	imgPath := PostSS(ctx, tconn, device, packageName, hs, runID, hostIP, viaChrome)
-	ah.AddHistory(histMsg, imgPath)
+	// imgPath := PostSS(ctx, tconn, device, packageName, hs, runID, hostIP, viaChrome)
+	// ah.AddHistory(histMsg, imgPath)
 }

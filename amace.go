@@ -276,12 +276,19 @@ func AMACE(ctx context.Context, s *testing.State) {
 
 		// If dSrcType == playstore
 		// If dSrcType == python store
+
 		if dSrcType.Value() == "playstore" {
+			// err := amace.OpenPlayStore(ctx, tconn, keyboard)
+			// testing.ContextLogf(ctx, "Open play store: ", err)
+			// s.Logf("Installing app playstore: %v", appPack)
+			// // testing.Sleep(ctx, time.Second*120)
+			// // s.Log("Done sleeping for playstore....")
 			if status, err = amace.InstallARCApp(ctx, a, d, appPack, strings.Split(account.Value(), ":")[1]); err != nil {
 				testing.ContextLogf(ctx, "Failed to install app: %s , Status= %s, Error: %s", appPack.Pname, status, err)
 				// When an app is purchased an error is thrown but we dont want to report the error.. Instead continue with the rest of the check.
 				if status != amace.PURCHASED && status != amace.SKIPPEDAMACE {
 					failedToInstall = true
+
 				} else {
 					amace.AddHistoryWithImage(ctx, tconn, &appHistory, deviceInfo, appPack.Pname, "Purchased app.", runID.Value(), hostIP.Value(), false)
 				}
